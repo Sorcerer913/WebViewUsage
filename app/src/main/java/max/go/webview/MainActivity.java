@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         /*fileHistory = new File("./history/history.txt");
         try {
@@ -59,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
         webView = findViewById(R.id.webview);
         webView.setWebViewClient(webViewClient);
         webView.getSettings().setJavaScriptEnabled(true);
-
         googleButton = findViewById(R.id.button_google);
         FloatingActionButton fab = findViewById(R.id.fab);
         googleButton.setOnClickListener(googleClickListener);

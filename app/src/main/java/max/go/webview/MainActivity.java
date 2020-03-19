@@ -24,17 +24,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
 
     WebView webView;
     Button googleButton;
-    //PrintWriter fileWriter;
-    //Scanner fileScanner;
-    //private int currentHistoryLine = 0;
-    //private int fabClickCounter = 0;
-    //File fileHistory;
+    private boolean fabFlag;
+    LinkedList<String> linkedList = new LinkedList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,23 +43,12 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        /*fileHistory = new File("./history/history.txt");
-        try {
-            fileWriter = new PrintWriter(fileHistory);
-            fileScanner = new Scanner(fileHistory);
-        } catch (FileNotFoundException e) {
-            try {
-                fileHistory.createNewFile();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }*/
-        //fileWriter.println("$" + System.currentTimeMillis());
         //making WebView
         webView = findViewById(R.id.webview);
         webView.setWebViewClient(webViewClient);
         webView.getSettings().setJavaScriptEnabled(true);
         googleButton = findViewById(R.id.button_google);
+        fabFlag = true;
         FloatingActionButton fab = findViewById(R.id.fab);
         googleButton.setOnClickListener(googleClickListener);
         fab.setOnClickListener(googleClickListener);
@@ -69,33 +57,36 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener googleClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            webView.loadUrl("https://google.com");
-                /*if(fabClickCounter == 0) {
-                    webView.loadUrl("https://google.com");
-                }else{
-                    Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
-                    startActivity(intent);
-                }
-                fabClickCounter++;
+            if(fabFlag) {
+                String url = "https://google.com";
+                linkedList.add(url);
+                webView.loadUrl(url);
+                fabFlag = false;
+            }else{
+                Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+                Bundle instance = new Bundle();
+                ArrayList<String> arrayList = new ArrayList<>(linkedList.size());
+                arrayList.addAll(linkedList);
+                instance.putStringArrayList("historyList", arrayList);
+                startActivity(intent, instance);
+            }
 
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
+//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show();
         }
     };
 
     WebViewClient webViewClient = new WebViewClient(){
         @SuppressWarnings("deprecation") @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            //fileWriter.append(url+"\n");        //ERROR
-            //currentHistoryLine++;
+            linkedList.add(url);
             view.loadUrl(url);
             return true;
         }
         @TargetApi(Build.VERSION_CODES.N) @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
             String url = request.getUrl().toString();
-            //fileWriter.append((url+"\n"));        //ERROR
-            //currentHistoryLine++;
+            linkedList.add(url);
             view.loadUrl(url);
             return true;
         }
